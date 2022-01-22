@@ -1,5 +1,59 @@
 # stlink Changelog
 
+# v1.7.1
+
+Release date: 2022-xx-xx
+
+This release drops support for some older operating systems. Check project README for details.
+
+Updated system requirements:
+- `cmake` >= 3.10.2
+- `libusb` >= 1.0.21
+- `libgtk-dev` >= 3.22.30
+
+Features:
+
+- Support for writing option bytes on STM32F0/F1/F3 ([#346](https://github.com/stlink-org/stlink/pull/346), [#458](https://github.com/stlink-org/stlink/pull/458), [#808](https://github.com/stlink-org/stlink/pull/808), [#1084](https://github.com/stlink-org/stlink/pull/1084), [#1112](https://github.com/stlink-org/stlink/pull/1112))
+- Added chip-IDs for STM32G0B0/G0B1/G0C1/G050/G051/G061 ([#1140](https://github.com/stlink-org/stlink/pull/1140))
+- Added option byte info for STM32F411XX ([#1141](https://github.com/stlink-org/stlink/pull/1141))
+- Expanded and revised list of chips ([#1145](https://github.com/stlink-org/stlink/pull/1145), [#1164](https://github.com/stlink-org/stlink/pull/1164))
+- [STM32H72X/3X]: Added full access to all device memory ([#1158](https://github.com/stlink-org/stlink/pull/1158), [#1159](https://github.com/stlink-org/stlink/pull/1159))
+- Added support for STM32WLEx ([#1173](https://github.com/stlink-org/stlink/pull/1173))
+- Added support for STLINK-V3 devices with no MSD ([#1185](https://github.com/stlink-org/stlink/pull/1185))
+- Updated gdb-server.c to allow external memory access on STM32H73xx ([#1196](https://github.com/stlink-org/stlink/pull/1196), [#1197](https://github.com/stlink-org/stlink/pull/1197))
+- Erase addr size / section of the flash memory with st-flash ([#1213](https://github.com/stlink-org/stlink/pull/1213)) 
+
+Updates & changes:
+
+- [refactoring] Moved chip-specific parameters into separate files ([#237](https://github.com/stlink-org/stlink/pull/237), [#1129](https://github.com/stlink-org/stlink/pull/1129))
+- Added instructions for bug-reports and feature-requests to contribution guidelines ([#906](https://github.com/stlink-org/stlink/pull/906))
+- Added travis CI configuration for macOS 10.14 to maintain capability for 32-bit compilation ([#f5ada94](https://github.com/stlink-org/stlink/commit/f5ada9474cdb87ff37de0d4eb9e75622b5870646))
+- Updated description of chip id 0x0457 to L01x/L02x ([#1143](https://github.com/stlink-org/stlink/pull/1143), [#1144](https://github.com/stlink-org/stlink/pull/1144))
+- Dropped execute bits from source code files ([#1167](https://github.com/stlink-org/stlink/pull/1167))
+- Use proper Markdown headers for supported MCUs ([#1168](https://github.com/stlink-org/stlink/pull/1168))
+- Removed redundant array ([#1178](https://github.com/stlink-org/stlink/pull/1178))
+- Updated chip config files from the library structs ([#1181](https://github.com/stlink-org/stlink/pull/1181))
+- [doc] Corrected file path in tutorial ([#1186](https://github.com/stlink-org/stlink/pull/1186))
+- Improved chipid checks and printouts ([#1188](https://github.com/stlink-org/stlink/pull/1188)) 
+
+Fixes:
+- cmake: Install shared libraries in proper directories ([#1142](https://github.com/stlink-org/stlink/pull/1142))
+- Fixed clearance of the H7 dual bank flag ([#1146](https://github.com/stlink-org/stlink/pull/1146), [#1147](https://github.com/stlink-org/stlink/pull/1147))
+- Fix for 'libusb_devices were leaked' when no ST-LINK programmer was found ([#1150](https://github.com/stlink-org/stlink/pull/1150))
+- Set of fixes and improvements ([#1154](https://github.com/stlink-org/stlink/pull/1154))
+- Removed limit check for WRITEMEM_32BIT ([#1157](https://github.com/stlink-org/stlink/pull/1157))
+- Fixed get_stm32l0_flash_base address for STM32L152RE ([#1161](https://github.com/stlink-org/stlink/pull/1161), [#1162](https://github.com/stlink-org/stlink/pull/1162))
+- Fixed segfault if chip was not found in chip config files ([#1138](https://github.com/stlink-org/stlink/pull/1138), [#1163](https://github.com/stlink-org/stlink/pull/1163), [#1165](https://github.com/stlink-org/stlink/pull/1165), [#1166](https://github.com/stlink-org/stlink/pull/1166), [#1170](https://github.com/stlink-org/stlink/pull/1170))
+- Fixed parsing hex numbers in chip config files ([#1169](https://github.com/stlink-org/stlink/pull/1169))
+- Corrected flash_pagesize to use hex format ([#1172](https://github.com/stlink-org/stlink/pull/1172))
+- Fixed compilation for MSVC ([#1176](https://github.com/stlink-org/stlink/pull/1176))
+- Fixed few warnings for msvc about type conversion with possible lost data ([#1179](https://github.com/stlink-org/stlink/pull/1179))
+- st-flash and other utilities search for chip files in the wrong directory ([#1180](https://github.com/stlink-org/stlink/pull/1180), commit [#c8fc656](https://github.com/stlink-org/stlink/commit/c8fc6561fead79ad49c09d82bab864745086792c))
+- Fixed broken build on 32 bit systems ([#985](https://github.com/stlink-org/stlink/pull/985), [#1175](https://github.com/stlink-org/stlink/pull/1175), commit [#c8fc656](https://github.com/stlink-org/stlink/commit/c8fc6561fead79ad49c09d82bab864745086792c))
+- Define 'SSIZE_MAX' if not defined ([#1183](https://github.com/stlink-org/stlink/pull/1183))
+- Fixed compliation for OpenBSD 7.0 ([#1202](https://github.com/stlink-org/stlink/pull/1202))
+- Included 'SSIZE_MAX' from 'limits.h' in 'src/common.c' ([#1207](https://github.com/stlink-org/stlink/pull/1207))
+
 # v1.7.0
 
 Release date: 2021-04-25
@@ -40,10 +94,11 @@ Updates & changes:
 
 Fixes:
 
-- Improvements and fixes of the flash loaders, unification of the reset function ([#244](https://github.com/stlink-org/stlink/pull/244), [#382](https://github.com/stlink-org/stlink/pull/382), [#705](https://github.com/stlink-org/stlink/pull/705), [#980](https://github.com/stlink-org/stlink/pull/980), [#995](https://github.com/stlink-org/stlink/pull/995), [#1008](https://github.com/stlink-org/stlink/pull/1008), [#1115](https://github.com/stlink-org/stlink/pull/1115), [#1117](https://github.com/stlink-org/stlink/pull/1117), [#1122](https://github.com/stlink-org/stlink/pull/1122), [#1124](https://github.com/stlink-org/stlink/pull/1124))
-- Flash loader rework ([#356](https://github.com/stlink-org/stlink/pull/356), [#556](https://github.com/stlink-org/stlink/pull/556), [#593](https://github.com/stlink-org/stlink/pull/593), [#597](https://github.com/stlink-org/stlink/pull/597), [#607](https://github.com/stlink-org/stlink/pull/607), [#612](https://github.com/stlink-org/stlink/pull/612), [#638](https://github.com/stlink-org/stlink/pull/638), [#661](https://github.com/stlink-org/stlink/pull/661), [#690](https://github.com/stlink-org/stlink/pull/690), [#807](https://github.com/stlink-org/stlink/pull/807), [#817](https://github.com/stlink-org/stlink/pull/817), [#818](https://github.com/stlink-org/stlink/pull/818), [#854](https://github.com/stlink-org/stlink/pull/854), [#868](https://github.com/stlink-org/stlink/pull/868), [#967](https://github.com/stlink-org/stlink/pull/967), [#979](https://github.com/stlink-org/stlink/pull/979), [#1008](https://github.com/stlink-org/stlink/pull/1008), [#1043](https://github.com/stlink-org/stlink/pull/1043), [#1054](https://github.com/stlink-org/stlink/pull/1054), [#1092](https://github.com/stlink-org/stlink/pull/1092), [#1105](https://github.com/stlink-org/stlink/pull/1105), [#1113](https://github.com/stlink-org/stlink/pull/1113))
+- Improvements and fixes of the flash loaders, unification of the reset function ([#244](https://github.com/stlink-org/stlink/pull/244), [#382](https://github.com/stlink-org/stlink/pull/382), [#705](https://github.com/stlink-org/stlink/pull/705), [#724](https://github.com/stlink-org/stlink/pull/724), [#980](https://github.com/stlink-org/stlink/pull/980), [#995](https://github.com/stlink-org/stlink/pull/995), [#1008](https://github.com/stlink-org/stlink/pull/1008), [#1115](https://github.com/stlink-org/stlink/pull/1115), [#1117](https://github.com/stlink-org/stlink/pull/1117), [#1122](https://github.com/stlink-org/stlink/pull/1122), [#1124](https://github.com/stlink-org/stlink/pull/1124))
+- Flash loader rework ([#356](https://github.com/stlink-org/stlink/pull/356), [#556](https://github.com/stlink-org/stlink/pull/556), [#593](https://github.com/stlink-org/stlink/pull/593), [#597](https://github.com/stlink-org/stlink/pull/597), [#607](https://github.com/stlink-org/stlink/pull/607), [#612](https://github.com/stlink-org/stlink/pull/612), [#638](https://github.com/stlink-org/stlink/pull/638), [#661](https://github.com/stlink-org/stlink/pull/661), [#690](https://github.com/stlink-org/stlink/pull/690), [#724](https://github.com/stlink-org/stlink/pull/724), [#807](https://github.com/stlink-org/stlink/pull/807), [#817](https://github.com/stlink-org/stlink/pull/817), [#818](https://github.com/stlink-org/stlink/pull/818), [#854](https://github.com/stlink-org/stlink/pull/854), [#868](https://github.com/stlink-org/stlink/pull/868), [#967](https://github.com/stlink-org/stlink/pull/967), [#979](https://github.com/stlink-org/stlink/pull/979), [#1008](https://github.com/stlink-org/stlink/pull/1008), [#1043](https://github.com/stlink-org/stlink/pull/1043), [#1054](https://github.com/stlink-org/stlink/pull/1054), [#1092](https://github.com/stlink-org/stlink/pull/1092), [#1105](https://github.com/stlink-org/stlink/pull/1105), [#1113](https://github.com/stlink-org/stlink/pull/1113))
 - Fixed old DFU serial number for STLINK programmers ([#417](https://github.com/stlink-org/stlink/pull/417), [#494](https://github.com/stlink-org/stlink/pull/494), [#1106](https://github.com/stlink-org/stlink/pull/1106), [#1121](https://github.com/stlink-org/stlink/pull/1121))
-- Use vl flashloader for all STM32F1 series ([#769](https://github.com/stlink-org/stlink/pull/769), [#1041](https://github.com/stlink-org/stlink/pull/1041), [#1044](https://github.com/stlink-org/stlink/pull/1044))
+- Improvements for Chip_ID read ([#620](https://github.com/stlink-org/stlink/pull/620), [#1008](https://github.com/stlink-org/stlink/pull/1008), [#1120](https://github.com/stlink-org/stlink/pull/1120))
+- Use vl flashloader for all STM32F1 series ([#724](https://github.com/stlink-org/stlink/pull/724), [#769](https://github.com/stlink-org/stlink/pull/769), [#1041](https://github.com/stlink-org/stlink/pull/1041), [#1044](https://github.com/stlink-org/stlink/pull/1044))
 - [regression] Changed timeout on flash write ([#787](https://github.com/stlink-org/stlink/pull/787), [#981](https://github.com/stlink-org/stlink/pull/981), [#987](https://github.com/stlink-org/stlink/pull/987))
 - cmake compile failure with external `CMAKE_MODULE_PATH` set ([#962](https://github.com/stlink-org/stlink/pull/962))
 - doc/man: Fixed installation directory ([#970](https://github.com/stlink-org/stlink/pull/970))
@@ -67,7 +122,7 @@ Fixes:
 - [doc] Corrected spelling mistake in bug report template ([#1103](https://github.com/stlink-org/stlink/pull/1103))
 - Fixed STM32WB55 reading DEBUG IDCODE from the wrong address ([#1100](https://github.com/stlink-org/stlink/pull/1100), [#1101](https://github.com/stlink-org/stlink/pull/1101))
 - Applied missing changes to tests ([#1119](https://github.com/stlink-org/stlink/pull/1119))
-- Improvements for Chip_ID read ([#1008](https://github.com/stlink-org/stlink/pull/1008), [#1120](https://github.com/stlink-org/stlink/pull/1120))
+- Fixed reading of chip ID on Cortex-M0+ core ([#1017](https://github.com/stlink-org/stlink/pull/1017), [#1125](https://github.com/stlink-org/stlink/pull/1125), [#1126](https://github.com/stlink-org/stlink/pull/1126), [#1133](https://github.com/stlink-org/stlink/pull/1133))
 
 # v1.6.1
 
@@ -165,7 +220,6 @@ Fixes:
 - Set static link for `libssp` (stack-smashing protection) ([#960](https://github.com/stlink-org/stlink/pull/960), [#961](https://github.com/stlink-org/stlink/pull/961))
 - Fixed udev rules installing to wrong directory ([#966](https://github.com/stlink-org/stlink/pull/966))
 - Fixed formatting for options display in `st-flash` & `st-info` (commits [#c783d0e](https://github.com/stlink-org/stlink/commit/c783d0e777ccc83a7a8be26a4f4d3414e0478560) and [#562cd24](https://github.com/stlink-org/stlink/commit/562cd2496e696dbd22950925866aac662d81ee5f))
-- Fixed reading of chip ID on Cortex-M0+ core ([#1125](https://github.com/stlink-org/stlink/pull/1125), [#1126](https://github.com/stlink-org/stlink/pull/1126), [#1133](https://github.com/stlink-org/stlink/pull/1133))
 
 # v1.6.0
 
@@ -245,7 +299,7 @@ Updates and fixes:
 - Debian packaging, `cmake` and `README.md` fixes ([#682](https://github.com/stlink-org/stlink/pull/682), [#683](https://github.com/stlink-org/stlink/pull/683))
 - Disabled static library installation by default ([#702](https://github.com/stlink-org/stlink/pull/702))
 - Fix for `libusb` deprecation ([#703](https://github.com/stlink-org/stlink/pull/703), [#704](https://github.com/stlink-org/stlink/pull/704))
-- Renamed `STLINK_CHIPID_STM32_L4R9` to `STLINK_CHIPID_STM32_L4RX` ([#706](https://github.com/stlink-org/stlink/pull/706))
+- Renamed `STLINK_CHIPID_STM32_L4R9` to `STLINK_CHIPID_STM32_L4Rx` ([#706](https://github.com/stlink-org/stlink/pull/706))
 - [regression] stlink installation under Linux (Debian 9) is broken since #695 ([#700](https://github.com/stlink-org/stlink/pull/700), [#701](https://github.com/stlink-org/stlink/pull/701), [#707](https://github.com/stlink-org/stlink/pull/707))
 - Fixed flash memory map for STM32F72xxx target ([#711](https://github.com/stlink-org/stlink/pull/711))
 - Proper flash page size calculation for STM32F412xx target ([#721](https://github.com/stlink-org/stlink/pull/721))

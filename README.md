@@ -1,4 +1,4 @@
-# Open source version of the STMicroelectronics STlink Tools
+# Open source version of the STMicroelectronics STLINK Tools
 
 [![BSD licensed](https://img.shields.io/badge/license-BSD-blue.svg)](https://raw.githubusercontent.com/hyperium/hyper/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/stlink-org/stlink.svg)](https://github.com/stlink-org/stlink/releases/latest)
@@ -38,7 +38,7 @@ It supports several so called STLINK programmer boards (and clones thereof) whic
   - stand-alone programmer (STLINK-V3SET, STLINK-V3MINI, STLINK-V3MODS)
   - on-board on some STM32 Nucleo boards (STLINK-V3E)
 
-_\*)_ **Note: Support for the STLINK/V1 on macOS is limited to 10.14 - 10.15. Due to the deprecation and removal of macOS Kernel Extensions (KEXT) there will be no support for this programmer on macOS 11 or any later version.**
+_\*)_ *Note: Support for the STLINK/V1 on macOS is limited to 10.15. Due to the deprecation and removal of macOS Kernel Extensions (KEXT) there will be no support for this programmer on macOS 11 or any later version.*
 
 On the user level there is no difference in handling or operation between these different revisions.
 
@@ -53,9 +53,9 @@ The STlink toolset includes:
 
 ## Supported operating systems and hardware combinations
 
-Currently known working combinations of programmers and targets are listed in [devices_boards.md](doc/devices_boards.md).
+Currently known working MCU targets are listed in [devices_boards.md](doc/devices_boards.md).
 
-Supported operating systems are listed in [version_support.md](doc/version_support.md).
+A list of supported operating can be found in [version_support.md](doc/version_support.md).
 
 ## Tutorial & HOWTO
 
@@ -110,3 +110,9 @@ When there is no executable available for your platform or you need the latest (
 - Please start new forks from the develop branch, as pull requests will go into this branch as well.
 
 Please also refer to our [Contribution Guidelines](CONTRIBUTING.md).
+
+## User Reviews
+
+*I hope it's not to out of topic, but I've been so frustrated with AVR related things on OpenBSD, the fact that stlink built out of the box without needing to touch anything was so relieving. Literally made my whole weekend better!
+I take it's thanks to @Crest and also to the stlink-org team (@Nightwalker-87 and @xor-gate it seems) to have made a software that's not unfriendly to the "fringe" OSes.
+Thank you <3"* - nbonfils, 11.12.2021

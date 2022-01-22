@@ -2,7 +2,7 @@
 # General cmake settings
 ###
 
-cmake_minimum_required(VERSION 3.4.2)
+cmake_minimum_required(VERSION 3.10.2)
 cmake_policy(SET CMP0042 NEW)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -17,6 +17,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 project(stlink C)
 set(PROJECT_DESCRIPTION "Open source version of the STMicroelectronics ST-LINK Tools")
 include(GNUInstallDirs) # Define GNU standard installation directories
+
+## MCU configuration files
+set(CMAKE_CHIPS_SUBDIR stlink/chips)
+set(CMAKE_CHIPS_DIR  ${CMAKE_INSTALL_PREFIX}/${CMAKE_CHIPS_SUBDIR})
+add_definitions( -DETC_STLINK_DIR="${CMAKE_CHIPS_DIR}" )
 
 ## Determine project version
 include(${CMAKE_MODULE_PATH}/get_version.cmake)
@@ -68,6 +73,11 @@ endif()
 CHECK_INCLUDE_FILE(unistd.h STLINK_HAVE_UNISTD_H)
 if (STLINK_HAVE_UNISTD_H)
     add_definitions(-DSTLINK_HAVE_UNISTD_H)
+endif ()
+
+CHECK_INCLUDE_FILE(dirent.h STLINK_HAVE_DIRENT_H)
+if (STLINK_HAVE_DIRENT_H)
+    add_definitions(-DSTLINK_HAVE_DIRENT_H)
 endif ()
 
 if (MSVC)
@@ -194,8 +204,11 @@ else ()
     target_link_libraries(${STLINK_LIB_SHARED} ${LIBUSB_LIBRARY} ${SSP_LIB})
 endif ()
 
-install(TARGETS ${STLINK_LIB_SHARED} DESTINATION ${STLINK_LIBRARY_PATH})
-
+install(TARGETS ${STLINK_LIB_SHARED}
+        ARCHIVE DESTINATION ${STLINK_LIBRARY_PATH}
+        LIBRARY DESTINATION ${STLINK_LIBRARY_PATH}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        )
 
 ###
 # Static library
@@ -273,6 +286,10 @@ install(TARGETS st-flash DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(TARGETS st-info DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(TARGETS st-util DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(TARGETS st-trace DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+# Install MCU configuration files
+file(GLOB CHIP_FILES ${CMAKE_SOURCE_DIR}/config/chips/*.chip)
+install(FILES ${CHIP_FILES} DESTINATION ${CMAKE_CHIPS_DIR})
 
 
 ###

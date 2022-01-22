@@ -113,7 +113,7 @@ int parse_options(int argc, char** argv, st_state_t *st) {
     const char * help_str = "%s - usage:\n\n"
                             "  -h, --help\t\tPrint this help\n"
                             "  -V, --version\t\tPrint the version\n"
-                            "  -vXX, --verbose=XX\tSpecify a specific verbosity level (0..99)\n"
+                            "  -vXX, --verbose=XX\tSpecify a specific verbosity level (0...99)\n"
                             "  -v, --verbose\t\tSpecify generally verbose logging\n"
                             "  -p 4242, --listen_port=1234\n"
                             "\t\t\tSet the gdb server listen port. "
@@ -124,8 +124,8 @@ int parse_options(int argc, char** argv, st_state_t *st) {
                             "  -n, --no-reset, --hot-plug\n"
                             "\t\t\tDo not reset board on connection.\n"
                             "  -u, --connect-under-reset\n"
-                            "\t\t\tConnect to the board before executing any instructions.\n"                            
-                            "  -F 1800K, --freq=1M\n"
+                            "\t\t\tConnect to the board before executing any instructions.\n"
+                            "  -F 1800k, --freq=1M\n"
                             "\t\t\tSet the frequency of the SWD/JTAG interface.\n"
                             "  --semihosting\n"
                             "\t\t\tEnable semihosting support.\n"
@@ -167,7 +167,7 @@ int parse_options(int argc, char** argv, st_state_t *st) {
 
             st->listen_port = q;
             break;
-            
+
         case 'm':
             st->persistent = true;
             break;
@@ -219,7 +219,9 @@ int main(int argc, char** argv) {
     state.connect_mode = CONNECT_NORMAL; // by default, reset board
     parse_options(argc, argv, &state);
 
-    printf("st-util\n");
+    printf("st-util %s\n", STLINK_VERSION);
+
+    init_chipids (ETC_STLINK_DIR);
 
     sl = stlink_open_usb(state.logging_level, state.connect_mode, state.serialnumber, state.freq);
     if (sl == NULL) { return(1); }
@@ -501,6 +503,26 @@ static const char* const memory_map_template_H7 =
     "  <memory type=\"rom\" start=\"0x1ff00000\" length=\"0x20000\"/>"      // bootrom
     "</memory-map>";
 
+static const char* const memory_map_template_H72x3x =
+    "<?xml version=\"1.0\"?>"
+    "<!DOCTYPE memory-map PUBLIC \"+//IDN gnu.org//DTD GDB Memory Map V1.0//EN\""
+    "     \"http://sourceware.org/gdb/gdb-memory-map.dtd\">"
+    "<memory-map>"
+    "  <memory type=\"rom\" start=\"0x00000000\" length=\"0x40000\"/>"         // ITCMRAM 64kB + Optional remap
+    "  <memory type=\"ram\" start=\"0x20000000\" length=\"0x20000\"/>"         // DTCMRAM 128kB
+    "  <memory type=\"ram\" start=\"0x24000000\" length=\"0x80000\"/>"         // RAM D1 320kB
+    "  <memory type=\"ram\" start=\"0x30000000\" length=\"0x08000\"/>"         // RAM D2 23kB
+    "  <memory type=\"ram\" start=\"0x38000000\" length=\"0x04000\"/>"         // RAM D3 16kB
+    "  <memory type=\"ram\" start=\"0x38800000\" length=\"0x01000\"/>"         // Backup RAM 4kB
+    "  <memory type=\"flash\" start=\"0x08000000\" length=\"0x%x\">"
+    "    <property name=\"blocksize\">0x%x</property>"
+    "  </memory>"
+    "  <memory type=\"ram\" start=\"0x40000000\" length=\"0x1fffffff\"/>"   // peripheral regs
+    "  <memory type=\"ram\" start=\"0x60000000\" length=\"0x3fffffff\"/>"   // External Memory
+    "  <memory type=\"ram\" start=\"0xC0000000\" length=\"0x1fffffff\"/>"   // External device
+    "  <memory type=\"ram\" start=\"0xe0000000\" length=\"0x1fffffff\"/>"   // cortex regs
+    "  <memory type=\"rom\" start=\"0x1ff00000\" length=\"0x20000\"/>"      // bootrom
+    "</memory-map>";
 
 static const char* const memory_map_template_F4_DE =
     "<?xml version=\"1.0\"?>"
@@ -533,14 +555,14 @@ char* make_memory_map(stlink_t *sl) {
 
     if (sl->chip_id == STLINK_CHIPID_STM32_F4 ||
         sl->chip_id == STLINK_CHIPID_STM32_F446 ||
-        sl->chip_id == STLINK_CHIPID_STM32_F411RE) {
+        sl->chip_id == STLINK_CHIPID_STM32_F411xx) {
             strcpy(map, memory_map_template_F4);
     } else if (sl->chip_id == STLINK_CHIPID_STM32_F4_DE) {
         strcpy(map, memory_map_template_F4_DE);
     } else if (sl->core_id == STM32F7_CORE_ID) {
         snprintf(map, sz, memory_map_template_F7,
                  (unsigned int)sl->sram_size);
-    } else if (sl->chip_id == STLINK_CHIPID_STM32_H74XXX) {
+    } else if (sl->chip_id == STLINK_CHIPID_STM32_H74xxx) {
         snprintf(map, sz, memory_map_template_H7,
                  (unsigned int)sl->flash_size,
                  (unsigned int)sl->flash_pgsz);
@@ -554,16 +576,20 @@ char* make_memory_map(stlink_t *sl) {
                  (unsigned int)sl->sys_base,
                  (unsigned int)sl->sys_size);
     } else if ((sl->chip_id == STLINK_CHIPID_STM32_L4) ||
-               (sl->chip_id == STLINK_CHIPID_STM32_L43X) ||
-               (sl->chip_id == STLINK_CHIPID_STM32_L46X)) {
+               (sl->chip_id == STLINK_CHIPID_STM32_L43x_L44x) ||
+               (sl->chip_id == STLINK_CHIPID_STM32_L45x_L46x)) {
         snprintf(map, sz, memory_map_template_L4,
                  (unsigned int)sl->flash_size,
                  (unsigned int)sl->flash_size);
-    } else if (sl->chip_id == STLINK_CHIPID_STM32_L496X) {
+    } else if (sl->chip_id == STLINK_CHIPID_STM32_L496x_L4A6x) {
         snprintf(map, sz, memory_map_template_L496,
                  (unsigned int)sl->flash_size,
                  (unsigned int)sl->flash_size);
-    } else {
+    } else if (sl->chip_id == STLINK_CHIPID_STM32_H72x) {
+        snprintf(map, sz, memory_map_template_H72x3x,
+                 (unsigned int)sl->flash_size,
+                 (unsigned int)sl->flash_pgsz);
+	} else {
         snprintf(map, sz, memory_map_template,
                  (unsigned int)sl->flash_size,
                  (unsigned int)sl->sram_size,
@@ -702,7 +728,7 @@ static void init_code_breakpoints(stlink_t *sl) {
         // IHI0029D, p. 48, Lock Access Register
         stlink_write_debug32(sl, STLINK_REG_CM7_FP_LAR, STLINK_REG_CM7_FP_LAR_KEY);
     }
-    
+
     for (int i = 0; i < code_break_num; i++) {
         code_breaks[i].type = 0;
         stlink_write_debug32(sl, STLINK_REG_CM3_FP_COMPn(i), 0);
@@ -733,7 +759,7 @@ static int update_code_breakpoint(stlink_t *sl, stm32_addr_t addr, int set) {
         type = CODE_BREAK_REMAP;
         fpb_addr = addr;
     }
-    
+
     int id = -1;
     for (int i = 0; i < code_break_num; i++)
         if (fpb_addr == code_breaks[i].addr || (set && code_breaks[i].type == 0)) {
@@ -754,7 +780,7 @@ static int update_code_breakpoint(stlink_t *sl, stm32_addr_t addr, int set) {
         bp->type |= type;
     else
         bp->type &= ~type;
-    
+
     // DDI0403E, p. 759, FP_COMPn register description
     mask = ((bp->type&0x03) << 30) | bp->addr | 1;
 
@@ -912,7 +938,7 @@ struct cache_level_desc {
 
 struct cache_desc_t {
     unsigned used;
-    
+
     // minimal line size in bytes
     unsigned int dminline;
     unsigned int iminline;
@@ -964,7 +990,7 @@ static void init_cache (stlink_t *sl) {
         cache_desc.used = 1;
     cache_desc.dminline = 4 << ((ctr >> 16) & 0x0f);
     cache_desc.iminline = 4 << (ctr & 0x0f);
-    
+
     stlink_read_debug32(sl, STLINK_REG_CM7_CLIDR, &clidr);
     cache_desc.louu = (clidr >> 27) & 7;
 
@@ -1674,7 +1700,7 @@ int serve(stlink_t *sl, st_state_t *st) {
 
                 for (unsigned int i = 0; i < align_count; i++) {
                     char hextmp[3] = { hexdata[i * 2], hexdata[i * 2 + 1], 0 };
-                    uint8_t byte = strtoul(hextmp, NULL, 16);
+                    uint8_t byte = (uint8_t)strtoul(hextmp, NULL, 16);
                     sl->q_buf[i] = byte;
                 }
 
@@ -1690,7 +1716,7 @@ int serve(stlink_t *sl, st_state_t *st) {
 
                 for (unsigned int i = 0; i < aligned_count; i++) {
                     char hextmp[3] = { hexdata[i * 2], hexdata[i * 2 + 1], 0 };
-                    uint8_t byte = strtoul(hextmp, NULL, 16);
+                    uint8_t byte = (uint8_t)strtoul(hextmp, NULL, 16);
                     sl->q_buf[i] = byte;
                 }
 
@@ -1704,7 +1730,7 @@ int serve(stlink_t *sl, st_state_t *st) {
             if (count) {
                 for (unsigned int i = 0; i < count; i++) {
                     char hextmp[3] = { hexdata[i * 2], hexdata[i * 2 + 1], 0 };
-                    uint8_t byte = strtoul(hextmp, NULL, 16);
+                    uint8_t byte = (uint8_t)strtoul(hextmp, NULL, 16);
                     sl->q_buf[i] = byte;
                 }
 

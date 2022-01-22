@@ -8,13 +8,13 @@
 
 static void usage(void) {
     puts("st-info --version");
-    puts("st-info --probe [--connect-under-reset] [--hot-plug] [--freq=<KHz>]");
+    puts("st-info --probe [--connect-under-reset] [--hot-plug] [--freq=<kHz>]");
     puts("st-info --serial");
-    puts("st-info --flash  [--connect-under-reset] [--hot-plug] [--freq=<KHz>]");
-    puts("st-info --pagesize  [--connect-under-reset] [--hot-plug] [--freq=<KHz>]");
-    puts("st-info --sram  [--connect-under-reset] [--hot-plug] [--freq=<KHz>]");
-    puts("st-info --chipid  [--connect-under-reset] [--hot-plug] [--freq=<KHz>]");
-    puts("st-info --descr  [--connect-under-reset] [--hot-plug] [--freq=<KHz>]");
+    puts("st-info --flash  [--connect-under-reset] [--hot-plug] [--freq=<kHz>]");
+    puts("st-info --pagesize  [--connect-under-reset] [--hot-plug] [--freq=<kHz>]");
+    puts("st-info --sram  [--connect-under-reset] [--hot-plug] [--freq=<kHz>]");
+    puts("st-info --chipid  [--connect-under-reset] [--hot-plug] [--freq=<kHz>]");
+    puts("st-info --descr  [--connect-under-reset] [--hot-plug] [--freq=<kHz>]");
 }
 
 static void stlink_print_version(stlink_t *sl) {
@@ -42,7 +42,6 @@ static void stlink_print_info(stlink_t *sl) {
     printf("  chipid:     0x%.4x\n", sl->chip_id);
 
     params = stlink_chipid_get_params(sl->chip_id);
-
     if (params) { printf("  descr:      %s\n", params->description); }
 }
 
@@ -103,14 +102,7 @@ static int print_data(int ac, char **av) {
 
     // open first st-link device
     sl = stlink_open_usb(0, connect, NULL, freq);
-
     if (sl == NULL) { return(-1); }
-
-    sl->verbose = 0;
-
-    if (stlink_current_mode(sl) == STLINK_DEV_DFU_MODE) { stlink_exit_dfu_mode(sl); }
-
-    if (stlink_current_mode(sl) != STLINK_DEV_DEBUG_MODE) { stlink_enter_swd_mode(sl); }
 
     if (strcmp(av[1], "--serial") == 0) {
         printf("%s\n", sl->serial);
@@ -124,7 +116,6 @@ static int print_data(int ac, char **av) {
         printf("0x%.4x\n", sl->chip_id);
     } else if (strcmp(av[1], "--descr") == 0) {
         const struct stlink_chipid_params *params = stlink_chipid_get_params(sl->chip_id);
-
         if (params == NULL) { return(-1); }
 
         printf("%s\n", params->description);
@@ -145,6 +136,8 @@ int main(int ac, char** av) {
         usage();
         return(-1);
     }
+
+    init_chipids (ETC_STLINK_DIR);
 
     err = print_data(ac, av);
 

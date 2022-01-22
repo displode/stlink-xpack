@@ -43,6 +43,23 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")              # FreeBSD; libusb is 
         message(FATAL_ERROR "Expected libusb library not found on your system! Verify your system integrity.")
     endif ()
 
+elseif (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")              # OpenBSD; libusb-1.0 is available from ports
+    FIND_PATH(
+        LIBUSB_INCLUDE_DIR NAMES libusb.h
+        HINTS /usr/local/include
+        PATH_SUFFIXES libusb-1.0
+        )
+    set(LIBUSB_NAME usb-1.0)
+    find_library(
+        LIBUSB_LIBRARY NAMES ${LIBUSB_NAME}
+        HINTS /usr/local
+        )
+    FIND_PACKAGE_HANDLE_STANDARD_ARGS(libusb DEFAULT_MSG LIBUSB_LIBRARY LIBUSB_INCLUDE_DIR)
+    mark_as_advanced(LIBUSB_INCLUDE_DIR LIBUSB_LIBRARY)
+    if (NOT LIBUSB_FOUND)
+        message(FATAL_ERROR "No libusb-1.0 library found on your system! Install libusb-1.0 from ports or packages.")
+    endif ()
+
 elseif (WIN32 OR (EXISTS "/etc/debian_version" AND MINGW)) # Windows or MinGW-toolchain on Debian
     # MinGW/MSYS/MSVC: 64-bit or 32-bit?
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -54,30 +71,8 @@ elseif (WIN32 OR (EXISTS "/etc/debian_version" AND MINGW)) # Windows or MinGW-to
     endif ()
 
     if (WIN32 AND NOT EXISTS "/etc/debian_version") # Skip this for Debian...
-        FIND_PATH(
-            LIBUSB_INCLUDE_DIR NAMES libusb.h
-            HINTS /usr /usr/local /opt
-            PATH_SUFFIXES libusb-1.0
-            )
-
-        if (MINGW OR MSYS)
-            set(LIBUSB_NAME usb-1.0)
-            find_library(
-                LIBUSB_LIBRARY NAMES ${LIBUSB_NAME}
-                HINTS ${LIBUSB_WIN_OUTPUT_FOLDER}/MinGW${ARCH}/static
-                )
-        else (MSVC)
-            set(LIBUSB_NAME libusb-1.0.lib)
-            find_library(
-                LIBUSB_LIBRARY NAMES ${LIBUSB_NAME}
-                HINTS ${LIBUSB_WIN_OUTPUT_FOLDER}/MS${ARCH}/dll
-                )
-        endif ()
-    endif ()
-
-    if (NOT LIBUSB_FOUND)
         # Preparations for installing libusb library
-        set(LIBUSB_WIN_VERSION 1.0.23)                  # set libusb version
+        set(LIBUSB_WIN_VERSION 1.0.24)                  # set libusb version
         set(LIBUSB_WIN_ARCHIVE libusb-${LIBUSB_WIN_VERSION}.7z)
         if (WIN32 AND NOT EXISTS "/etc/debian_version") # ... on native Windows systems
             set(LIBUSB_WIN_ARCHIVE_PATH ${CMAKE_BINARY_DIR}/${LIBUSB_WIN_ARCHIVE})
