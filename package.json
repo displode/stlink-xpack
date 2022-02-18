@@ -1,6 +1,6 @@
 {
   "name": "@displode/stlink-xpack",
-  "version": "0.1.3-b1.7.0",
+  "version": "0.1.4-b1.7.0",
   "description": "A binary xPack with stlink tools",
   "main": "",
   "scripts": {},
