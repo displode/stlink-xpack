@@ -1,6 +1,6 @@
 {
   "name": "@displode/stlink-xpack",
-  "version": "0.1.4-b1.7.0",
+  "version": "0.1.5-b1.7.0",
   "description": "A binary xPack with stlink tools",
   "main": "",
   "scripts": {},
@@ -35,7 +35,7 @@
     "minimumXpmRequired": "0.11.2",
     "binaries": {
       "destination": "./.content",
-      "baseUrl": "https://github.com/displode/stlink-xpack/releases/download/v0.1.4-b1.7.0",
+      "baseUrl": "https://github.com/displode/stlink-xpack/releases/download/xpack-v0.1.5-b1.7.0",
       "skip": 1,
       "platforms": {
         "darwin-x64": {

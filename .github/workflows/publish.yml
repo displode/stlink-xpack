@@ -2,7 +2,7 @@ name: Publish Package
 on:
   push:
     tags:
-      - 'xpack-0.*'
+      - 'xpack-v0.*'
   
 jobs:
   publish:
